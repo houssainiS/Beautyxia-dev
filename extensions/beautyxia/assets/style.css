@@ -1,0 +1,2467 @@
+/* =========================================
+   0. CSS Isolation Reset
+   ========================================= */
+.bxa-my-app-container,
+.bxa-my-app-container * {
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: inherit;
+}
+
+/* =========================================
+   1. CSS Variables (Default Theme Settings)
+   These match the defaults in your Liquid schema
+   ========================================= */
+.bxa-my-app-container {
+  /* General Colors */
+  --app-bg-color: #ffffff;
+  --app-text-color: #202223;
+  --app-subtext-color: #6d7175;
+  --app-border-color: #e1e3e5;
+
+  /* Button Colors */
+  --btn-camera-bg: #2563eb;
+  --btn-camera-text: #ffffff;
+  
+  --btn-analyze-bg: #202223;
+  --btn-analyze-text: #ffffff;
+  
+  --btn-upload-bg: #ffffff;
+  --btn-upload-text: #202223;
+  
+  /* Layout */
+  width: 100%;
+  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  color: var(--app-text-color) !important;
+}
+
+/* Root-level flex resilience.
+   If the theme's app-block wrapper is itself a flex or grid
+   container, a bare child with no explicit flex-basis can be
+   given `flex: 0 1 auto` with `min-width: auto` by the UA
+   default, which lets sibling content or a parent max-width
+   squeeze us down to a narrow "mobile" column with empty
+   gutters on desktop. These rules opt us out of that shrink
+   behavior regardless of whether the parent uses flex or grid. */
+.bxa-my-app-container {
+  flex: 1 1 100% !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  /* Grid case: if the parent is `display: grid` (e.g. a
+     theme-wide page grid) and we have no explicit column-span,
+     we get auto-placed into a single narrow track -- which
+     looks exactly like a mobile-width block floating in a
+     mostly-empty page, since the "blank space" is just the
+     grid's other empty columns. Force a full-width span
+     regardless of how many columns the parent grid defines.
+     This is a no-op (and harmless) on any non-grid parent. */
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+}
+
+/* =========================================
+   2. Main Styles
+   ========================================= */
+
+/* Added language selector styling and RTL support */
+.bxa-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.bxa-title-section {
+  flex: 1;
+}
+
+.bxa-lang-selector {
+  display: flex;
+  border: 2px solid #c9cccf;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 96px;
+  min-width: 96px;
+  max-width: 96px;
+  flex-shrink: 0;
+  position: relative;
+  box-sizing: border-box;
+  direction: ltr;
+}
+
+.bxa-lang-selector-btn {
+  flex: 1;
+  flex-basis: 32px;
+  padding: 6px 4px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  border: none;
+  background: #fff;
+  transition: background 0.3s, color 0.3s;
+  font-size: 12px;
+  width: 32px;
+  min-width: 32px;
+  max-width: 32px;
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  direction: ltr;
+}
+
+.bxa-lang-selector-btn:not(:last-child) {
+  border-right: 1px solid #c9cccf;
+  direction: ltr;
+}
+
+.bxa-lang-selector-btn.active {
+  background: #202223;
+  color: #fff !important;
+  direction: ltr;
+}
+
+.bxa-lang-selector-btn:hover:not(.active) {
+  background: #f0f0f0;
+}
+
+/* Scoped RTL support to only affect .bxa-my-app-container */
+.bxa-my-app-container[dir="rtl"] .bxa-header-content {
+  flex-direction: row-reverse;
+}
+
+.bxa-my-app-container[dir="rtl"] .bxa-eye-colors {
+  flex-direction: row-reverse;
+}
+
+.bxa-my-app-container[dir="rtl"] .bxa-recommendations-filters {
+  flex-direction: row-reverse;
+}
+
+.bxa-my-app-container[dir="rtl"] .bxa-active-filters {
+  flex-direction: row-reverse;
+}
+
+/* Mobile responsive adjustments for language selector */
+@media (max-width: 640px) {
+  .bxa-header-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .bxa-lang-selector {
+    align-self: flex-end;
+    width: 96px;
+  }
+
+  .bxa-my-app-container[dir="rtl"] .bxa-header-content {
+    flex-direction: column;
+  }
+
+  .bxa-my-app-container[dir="ltr"] .bxa-lang-selector {
+    align-self: flex-start;
+    width: 96px;
+  }
+}
+
+/* General container and card styling */
+.bxa-face-analysis-container {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  background-color: transparent !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  flex: 1 1 100% !important; /* was flex-shrink: 0 alone; also stop parent from collapsing our basis to content-size */
+  flex-shrink: 0 !important;
+  min-width: 0 !important;   /* prevent UA default min-width:auto from fighting width:100% inside a themed flex/grid ancestor */
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  grid-column: 1 / -1 !important; /* no-op unless an ancestor is display:grid */
+}
+
+@media (min-width: 640px) {
+  .bxa-face-analysis-container {
+    padding: 24px;
+  }
+}
+
+@media (min-width: 768px) {
+  .bxa-face-analysis-container {
+    padding: 32px;
+  }
+}
+
+.bxa-face-analysis-card {
+  /* Fill the parent's available width and only ever be
+     constrained by our own 768px cap -- never by an
+     inherited flex-shrink/min-width squeeze from the theme. */
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 768px !important;
+  flex: 0 1 768px !important; /* fill up to 768px, shrink gracefully with the viewport below that */
+  margin: 0 auto !important;  /* keeps it centered even if the flex context around it is stripped */
+  /* UPDATED: Uses Variable */
+  background-color: var(--app-bg-color) !important;
+  color: var(--app-text-color) !important;
+  border-radius: 12px;
+  border: 1px solid var(--app-border-color);
+  box-shadow: 0 1px 0 0 rgba(22, 29, 37, 0.05);
+  overflow: hidden;
+}
+
+/* Header styling */
+.bxa-face-analysis-header {
+  text-align: left;
+  padding: 20px 20px 16px 20px;
+  border-bottom: 1px solid var(--app-border-color);
+  /* UPDATED: Uses Variable */
+  background-color: var(--app-bg-color) !important;
+}
+
+.bxa-face-analysis-title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  /* UPDATED: Uses Variable */
+  color: var(--app-text-color) !important;
+  margin: 0 0 4px 0;
+}
+
+.bxa-face-analysis-description {
+  font-size: 14px;
+  /* UPDATED: Uses Variable (Subtext) */
+  color: var(--app-text-color) !important; /* Mapping to main text color as requested, or use opacity */
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Body content styling */
+.bxa-face-analysis-body {
+  padding: 20px;
+  display: grid;
+  gap: 20px;
+}
+
+/* Image preview styling */
+.bxa-face-analysis-preview {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #c9cccf;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f6f6f7 !important;
+}
+
+.bxa-preview-image {
+  object-fit: contain;
+  max-height: 100%;
+  max-width: 100%;
+  display: block;
+}
+
+.bxa-preview-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(32, 34, 35, 0.8) !important;
+  color: #ffffff !important;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-size: 14px;
+}
+
+.bxa-face-analysis-preview:hover .bxa-preview-overlay {
+  opacity: 1;
+}
+
+.bxa-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 256px;
+  border: 2px dashed #c9cccf;
+  border-radius: 12px;
+  background-color: #f6f6f7 !important;
+  color: #6d7175 !important;
+  transition: all 0.2s ease;
+}
+
+.bxa-preview-placeholder:hover {
+  border-color: var(--app-text-color);
+  background-color: #f1f2f3 !important;
+}
+
+.bxa-face-icon {
+  color: #6d7175 !important;
+  width: 64px !important;
+  height: 64px !important;
+  margin-bottom: 12px;
+}
+
+/* Prevent theme CSS from filling/hiding SVG children inside the face icon.
+   Themes often do `circle { fill: currentColor }` which turns the outer
+   circle into a solid disc and hides the eyes and smile behind it. */
+.bxa-face-icon > circle:first-child {
+  fill: none !important;
+  stroke: #6d7175 !important;
+}
+
+.bxa-face-icon > circle:not(:first-child) {
+  fill: #6d7175 !important;
+  stroke: #6d7175 !important;
+}
+
+.bxa-face-icon > path {
+  fill: none !important;
+  stroke: #6d7175 !important;
+}
+
+/* =========================================
+   SVG Icon Protection
+   Defends against two common theme patterns:
+   1. `svg { width: 1em; height: 1em; }` — shrinks icons to the font size
+   2. `circle, path { fill: currentColor; }` — fills stroke-only icons as solid shapes
+
+   Fill protection: prevents themes from applying fill to children of any
+   fill="none" SVG. The .bxa-face-icon eye-circle rules above are more
+   specific and correctly override this to keep the eye dots filled.
+
+   Size protection: explicit px values with !important beat any theme
+   `svg { width: 1em }` rule regardless of specificity.
+   ========================================= */
+
+.bxa-my-app-container svg[fill="none"] > * {
+  fill: none !important;
+}
+
+.bxa-my-app-container .bxa-upload-button svg,
+.bxa-my-app-container .bxa-webcam-button svg,
+.bxa-my-app-container .bxa-capture-button svg,
+.bxa-my-app-container .bxa-stop-camera-button svg,
+.bxa-my-app-container .bxa-analyze-button svg,
+.bxa-my-app-container .bxa-btn-feedback-positive svg,
+.bxa-my-app-container .bxa-btn-feedback-negative svg {
+  width: 20px !important;
+  height: 20px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-my-app-container .bxa-card-icon svg {
+  width: 20px !important;
+  height: 20px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-my-app-container .bxa-results-icon svg,
+.bxa-my-app-container .bxa-recommendations-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-my-app-container .bxa-no-products-icon svg {
+  width: 48px !important;
+  height: 48px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-my-app-container .bxa-image-icon svg {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-my-app-container .bxa-face-badge svg {
+  width: 12px !important;
+  height: 12px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-preview-placeholder p {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* =========================================
+   Face scan overlay
+   Sits on top of the uploaded photo inside
+   .bxa-face-analysis-preview and is only shown
+   while analysis is in progress (main.js toggles
+   the .bxa-is-scanning class on the preview
+   container, and also sets the same critical
+   properties inline as a belt-and-suspenders
+   backup - see main.js). Purely decorative -
+   pointer-events are disabled so it never blocks
+   clicks.
+
+   THEME-CONFLICT HARDENING
+   Same three failure modes documented above for
+   .bxa-loading-section apply here, since some
+   shops' themes were found to defeat the plain
+   version of this overlay entirely:
+   1. Broad "hide anything that looks like a
+      loading/overlay widget" theme rules, e.g.
+      [class*="overlay"] { display: none !important; }
+      -> every element below re-asserts display/
+      visibility with !important on a selector
+      specific enough to win.
+   2. Blanket animation killers, e.g.
+      * { animation: none !important; } or a
+      prefers-reduced-motion block applied
+      unconditionally.
+      -> animation-name/duration/timing-function/
+      iteration-count/play-state are re-declared
+      with !important on highly specific selectors.
+      IMPORTANT: we never put !important on a
+      property a @keyframes rule actually animates
+      (opacity, top, transform) - important author
+      declarations outrank a *running* animation
+      per the CSS cascade, so doing that would
+      freeze the animation on its first frame.
+      Only static, non-animated properties get
+      !important here.
+   3. Generic keyframe name collisions (a theme or
+      third-party script defining its own
+      @keyframes with the same short name).
+      -> every keyframe is namespaced
+      "bxa-beautyxia-scan-*-v1".
+   ========================================= */
+.bxa-scan-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  border-radius: 8px;
+  z-index: 5;
+  transition: opacity 0.25s ease;
+}
+
+.bxa-my-app-container .bxa-face-analysis-preview {
+  position: relative !important;
+}
+
+.bxa-my-app-container .bxa-scan-overlay.bxa-is-scanning,
+.bxa-my-app-container .bxa-face-analysis-preview.bxa-is-scanning .bxa-scan-overlay {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  z-index: 5 !important;
+}
+
+.bxa-my-app-container .bxa-face-analysis-preview.bxa-is-scanning {
+  border-color: var(--btn-analyze-bg, #4a90e2) !important;
+  box-shadow: 0 0 0 3px var(--btn-analyze-bg, #4a90e2), 0 0 16px var(--btn-analyze-bg, #4a90e2) !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Faint animated grid, gives the "machine vision" feel */
+.bxa-scan-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, var(--btn-analyze-bg, #4a90e2) 0, var(--btn-analyze-bg, #4a90e2) 1px, transparent 1px, transparent 24px),
+    repeating-linear-gradient(90deg, var(--btn-analyze-bg, #4a90e2) 0, var(--btn-analyze-bg, #4a90e2) 1px, transparent 1px, transparent 24px);
+  opacity: 0.12;
+  animation: bxa-beautyxia-scan-grid-fade-v1 2.4s ease-in-out infinite;
+}
+
+.bxa-my-app-container .bxa-scan-overlay .bxa-scan-grid {
+  display: block !important;
+  visibility: visible !important;
+  position: absolute !important;
+  inset: 0 !important;
+  animation-name: bxa-beautyxia-scan-grid-fade-v1 !important;
+  animation-duration: 2.4s !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+}
+
+@keyframes bxa-beautyxia-scan-grid-fade-v1 {
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.22; }
+}
+
+/* Sweeping laser line */
+.bxa-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, var(--btn-analyze-bg, #4a90e2) 50%, transparent 100%);
+  box-shadow: 0 0 10px 2px var(--btn-analyze-bg, #4a90e2);
+  animation: bxa-beautyxia-scan-sweep-v1 2.4s ease-in-out infinite;
+}
+
+.bxa-my-app-container .bxa-scan-overlay .bxa-scan-line {
+  display: block !important;
+  visibility: visible !important;
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 3px !important;
+  animation-name: bxa-beautyxia-scan-sweep-v1 !important;
+  animation-duration: 2.4s !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+}
+
+@keyframes bxa-beautyxia-scan-sweep-v1 {
+  0%   { top: 0%;   opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { top: 100%; opacity: 1; }
+  58%  { opacity: 0; }
+  100% { top: 0%;   opacity: 0; }
+}
+
+/* Viewfinder-style corner brackets */
+.bxa-scan-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--btn-analyze-bg, #4a90e2);
+  animation: bxa-beautyxia-scan-corner-pulse-v1 1.8s ease-in-out infinite;
+}
+
+.bxa-my-app-container .bxa-scan-overlay .bxa-scan-corner {
+  display: block !important;
+  visibility: visible !important;
+  position: absolute !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-style: solid !important;
+  border-width: 3px !important;
+  animation-duration: 1.8s !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+}
+
+.bxa-scan-corner-tl {
+  top: 10px;
+  left: 10px;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 4px 0 0 0;
+  animation-delay: 0s;
+}
+
+.bxa-scan-corner-tr {
+  top: 10px;
+  right: 10px;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0 4px 0 0;
+  animation-delay: 0.15s;
+}
+
+.bxa-scan-corner-bl {
+  bottom: 10px;
+  left: 10px;
+  border-right: none;
+  border-top: none;
+  border-radius: 0 0 0 4px;
+  animation-delay: 0.3s;
+}
+
+.bxa-scan-corner-br {
+  bottom: 10px;
+  right: 10px;
+  border-left: none;
+  border-top: none;
+  border-radius: 0 0 4px 0;
+  animation-delay: 0.45s;
+}
+
+.bxa-my-app-container .bxa-scan-overlay .bxa-scan-corner-tl { animation-name: bxa-beautyxia-scan-corner-pulse-v1 !important; top: 10px !important; left: 10px !important; }
+.bxa-my-app-container .bxa-scan-overlay .bxa-scan-corner-tr { animation-name: bxa-beautyxia-scan-corner-pulse-v1 !important; top: 10px !important; right: 10px !important; }
+.bxa-my-app-container .bxa-scan-overlay .bxa-scan-corner-bl { animation-name: bxa-beautyxia-scan-corner-pulse-v1 !important; bottom: 10px !important; left: 10px !important; }
+.bxa-my-app-container .bxa-scan-overlay .bxa-scan-corner-br { animation-name: bxa-beautyxia-scan-corner-pulse-v1 !important; bottom: 10px !important; right: 10px !important; }
+
+@keyframes bxa-beautyxia-scan-corner-pulse-v1 {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* Pulsing "landmark" detection points */
+.bxa-scan-point {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--btn-analyze-bg, #4a90e2);
+  box-shadow: 0 0 6px 2px var(--btn-analyze-bg, #4a90e2);
+  transform: translate(-50%, -50%) scale(0);
+  animation: bxa-beautyxia-scan-point-pulse-v1 1.8s ease-in-out infinite;
+}
+
+.bxa-my-app-container .bxa-scan-overlay .bxa-scan-point {
+  display: block !important;
+  visibility: visible !important;
+  position: absolute !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  animation-name: bxa-beautyxia-scan-point-pulse-v1 !important;
+  animation-duration: 1.8s !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+}
+
+@keyframes bxa-beautyxia-scan-point-pulse-v1 {
+  0%   { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
+  15%  { transform: translate(-50%, -50%) scale(1.3);  opacity: 1; }
+  30%  { transform: translate(-50%, -50%) scale(1);    opacity: 0.85; }
+  70%  { transform: translate(-50%, -50%) scale(1);    opacity: 0.85; }
+  90%  { transform: translate(-50%, -50%) scale(0.6);  opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
+}
+
+/* Respect an explicit OS-level reduced motion preference (mirrors the
+   loading spinner's policy: we don't override a real user preference,
+   only guard against theme scripts/CSS that disable all animation
+   unconditionally, which is handled by the !important rules above). */
+@media (prefers-reduced-motion: reduce) {
+  .bxa-scan-line,
+  .bxa-scan-grid,
+  .bxa-scan-corner,
+  .bxa-scan-point,
+  .bxa-my-app-container .bxa-scan-overlay .bxa-scan-line,
+  .bxa-my-app-container .bxa-scan-overlay .bxa-scan-grid,
+  .bxa-my-app-container .bxa-scan-overlay .bxa-scan-corner,
+  .bxa-my-app-container .bxa-scan-overlay .bxa-scan-point {
+    animation: none !important;
+  }
+  .bxa-my-app-container .bxa-face-analysis-preview.bxa-is-scanning .bxa-scan-overlay {
+    opacity: 0.9 !important;
+  }
+  .bxa-scan-grid { opacity: 0.15; }
+  .bxa-scan-corner { opacity: 1; }
+  .bxa-scan-point { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+}
+
+/* Upload section styling */
+.bxa-upload-section {
+  display: grid;
+  width: 100%;
+  max-width: 100%;
+  align-items: center;
+  gap: 12px;
+  position: relative; /* containing block for the clipped .bxa-hidden-file input */
+}
+
+.bxa-hidden-file {
+  display: none;
+}
+
+/* =========================================
+   Bulletproof hidden file input (theme-override defense)
+   Some themes ship global resets such as
+   `input[type="file"] { display: block !important; }`
+   which beat the simple `display: none` rule above and
+   cause the raw <input id="picture"> to render next to
+   our styled .bxa-upload-button.
+
+   Fix: stack multiple independent, mutually-redundant
+   hiding techniques (visual clipping, zero box size,
+   opacity, negative z-index, removal from flow) behind a
+   highly specific selector, each flagged !important. A
+   theme would have to override every single property with
+   equal-or-higher specificity to make the input reappear,
+   which no known "input[type=file]" reset does. We
+   deliberately keep `display: block` in this rule (instead
+   of `none`) so a theme's `display: block !important` reset
+   is rendered harmless rather than fought head-on. */
+.bxa-my-app-container .bxa-upload-section input#picture.bxa-hidden-file[type="file"] {
+  display: block !important;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 1px !important;
+  max-height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  opacity: 0 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+.bxa-upload-button,
+.bxa-analyze-button,
+.bxa-webcam-button,
+.bxa-capture-button,
+.bxa-stop-camera-button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+  line-height: 1.4;
+}
+
+/* UPDATED: Upload Button Variables */
+.bxa-upload-button {
+  background-color: var(--btn-upload-bg) !important;
+  color: var(--btn-upload-text) !important;
+  border: 1px solid #c9cccf;
+}
+
+.bxa-upload-button:hover {
+  filter: brightness(0.95);
+  border-color: #8c9196;
+}
+
+/* UPDATED: Camera/Webcam Button Variables */
+.bxa-webcam-button {
+  background-color: var(--btn-camera-bg) !important;
+  color: var(--btn-camera-text) !important;
+  border: 1px solid var(--btn-camera-bg);
+}
+
+.bxa-webcam-button:hover {
+  filter: brightness(0.9);
+}
+
+.bxa-capture-button {
+  background-color: var(--btn-camera-bg) !important; /* Reusing camera color or keeping green */
+  color: var(--btn-camera-text) !important;
+  border: 1px solid var(--btn-camera-bg);
+  filter: hue-rotate(90deg); /* Keeping it distinct (green-ish) relative to blue */
+}
+
+.bxa-capture-button:hover {
+  filter: hue-rotate(90deg) brightness(0.9);
+}
+
+.bxa-stop-camera-button {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  border: 1px solid #dc2626;
+}
+
+.bxa-stop-camera-button:hover {
+  background-color: #b91c1c !important;
+  border-color: #b91c1c;
+}
+
+/* UPDATED: Analyze Button Variables */
+.bxa-analyze-button {
+  background-color: var(--btn-analyze-bg) !important;
+  color: var(--btn-analyze-text) !important;
+  border: 1px solid var(--btn-analyze-bg);
+}
+
+.bxa-analyze-button:hover:not(:disabled) {
+  filter: brightness(0.8); /* Darken on hover */
+}
+
+.bxa-analyze-button:disabled {
+  background-color: #e1e3e5 !important;
+  color: #8c9196 !important;
+  border-color: #e1e3e5;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.bxa-icon-upload {
+  margin-right: 8px;
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0;
+}
+
+.bxa-upload-note {
+  font-size: 13px;
+  color: var(--app-subtext-color) !important;
+  text-align: center;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Results section styling */
+.bxa-results-section {
+  padding: 20px;
+  /* UPDATED: Uses Variable */
+  background-color: var(--app-bg-color) !important;
+}
+
+.bxa-results-header {
+  text-align: center;
+  padding: 20px 0 30px 0;
+  border-bottom: 1px solid var(--app-border-color);
+  margin-bottom: 30px;
+}
+
+.bxa-results-icon {
+  width: 48px;
+  height: 48px;
+  background-color: #f0f9ff !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto;
+}
+
+.bxa-my-app-container .bxa-results-icon svg {
+  color: #2563eb !important;
+  width: 24px !important;
+  height: 24px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-results-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  /* UPDATED: Uses Variable */
+  color: var(--app-text-color) !important;
+  margin: 0 0 8px 0;
+}
+
+.bxa-results-header p {
+  font-size: 14px;
+  color: var(--app-subtext-color) !important;
+  margin: 0;
+}
+
+/* Face display styling */
+.bxa-face-display {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.bxa-face-frame {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #00d4aa;
+}
+
+.bxa-face-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bxa-face-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  background-color: #00d4aa !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+}
+
+.bxa-my-app-container .bxa-face-badge svg {
+  color: #ffffff !important;
+  width: 12px !important;
+  height: 12px !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.bxa-face-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+  margin: 0 0 4px 0;
+}
+
+.bxa-face-info p {
+  font-size: 14px;
+  color: var(--app-subtext-color) !important;
+  margin: 0;
+}
+
+/* Result cards styling */
+.bxa-result-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.bxa-result-card {
+  background: var(--app-bg-color);
+  border: 1px solid var(--app-border-color);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.bxa-result-card:hover {
+  border-color: #c9cccf;
+  box-shadow: 0 2px 8px rgba(22, 29, 37, 0.1);
+}
+
+.bxa-result-card .bxa-card-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #f0f9ff !important;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.bxa-my-app-container .bxa-result-card .bxa-card-icon svg {
+  color: #2563eb !important;
+  width: 20px !important;
+  height: 20px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-result-card h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+  margin: 0 0 8px 0;
+}
+
+.bxa-probability-bars {
+  display: block !important;
+  margin-top: 16px !important;
+}
+
+.bxa-probability-bar {
+  display: block !important;
+  margin-bottom: 12px !important;
+}
+
+.bxa-prob-label {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-size: 12px !important;
+  color: var(--app-subtext-color) !important;
+  margin-bottom: 4px !important;
+}
+
+/* =========================================
+   Probability bar hardening
+   These bars were reported "hidden or colors changed" on one
+   theme. Root causes: (1) background-color lacked !important
+   (now fixed globally above), and (2) more importantly, height
+   was NOT !important -- a common theme "layout fix" reset like
+   `div { height: auto !important; }` collapses a content-less
+   div (like .bxa-prob-track / .bxa-prob-fill, which have no
+   text content to establish a height) down to 0px, making the
+   whole bar invisible regardless of its color.
+   Note: .bxa-prob-fill's WIDTH is intentionally left alone --
+   it's set inline by main.js from the live analysis percentage
+   (e.g. style="width: 21.8%") and must stay authoritative. */
+.bxa-my-app-container .bxa-prob-track {
+  display: block !important;
+  height: 6px !important;
+  min-height: 6px !important;
+  width: 100% !important;
+  background-color: var(--app-border-color) !important;
+  border-radius: 3px !important;
+  overflow: hidden !important;
+}
+
+.bxa-my-app-container .bxa-prob-fill {
+  display: block !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  background-color: #2563eb !important;
+  border-radius: 3px !important;
+  transition: width 0.8s ease;
+}
+
+/* Eye colors styling */
+.bxa-eye-colors {
+  display: flex;
+  gap: 16px;
+}
+
+.bxa-eye-color {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bxa-eye-label {
+  font-size: 12px;
+  color: var(--app-subtext-color) !important;
+  font-weight: 500;
+}
+
+.bxa-eye-value {
+  font-size: 14px;
+  color: var(--app-text-color) !important;
+  font-weight: 600;
+  padding: 4px 8px;
+  background-color: #f6f6f7 !important;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* Acne analysis styling */
+.bxa-acne-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bxa-acne-level {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bxa-acne-value {
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+}
+
+.bxa-confidence-meter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bxa-confidence-bar {
+  flex: 1;
+  height: 8px;
+  background-color: var(--app-border-color) !important;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bxa-confidence-fill {
+  height: 100%;
+  background-color: #f59e0b !important;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+.bxa-confidence-text {
+  font-size: 12px;
+  color: var(--app-subtext-color) !important;
+  font-weight: 500;
+  min-width: 40px;
+}
+
+/* Detected issues styling */
+.bxa-detected-issues {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bxa-issue-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f2f3;
+}
+
+.bxa-issue-item:last-child {
+  border-bottom: none;
+}
+
+.bxa-issue-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bxa-issue-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--app-text-color) !important;
+}
+
+.bxa-issue-count {
+  font-size: 12px;
+  color: var(--app-subtext-color) !important;
+}
+
+.bxa-issue-confidence {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+}
+
+.bxa-issue-confidence .bxa-confidence-bar {
+  width: 40px;
+  height: 4px;
+}
+
+.bxa-issue-confidence .bxa-confidence-text {
+  font-size: 11px;
+}
+
+/* No issues message styling */
+.bxa-no-issues-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: #f0fdf4 !important;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #15803d !important;
+}
+
+.bxa-no-issues-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #16a34a !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bxa-my-app-container .bxa-no-issues-icon svg {
+  color: #ffffff !important;
+  width: 12px !important;
+  height: 12px !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.bxa-no-issues-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Analysis images section */
+.bxa-analysis-images-section {
+  margin-top: 40px;
+  padding: 30px 20px;
+  background-color: var(--app-bg-color) !important;
+  border: 1px solid var(--app-border-color);
+  border-radius: 12px;
+}
+
+.bxa-images-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.bxa-images-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+  margin: 0 0 8px 0;
+}
+
+.bxa-images-header p {
+  font-size: 14px;
+  color: var(--app-subtext-color) !important;
+  margin: 0;
+}
+
+.bxa-analysis-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.bxa-analysis-image-card {
+  background: var(--app-bg-color);
+  border: 1px solid var(--app-border-color);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.bxa-analysis-image-card:hover {
+  border-color: #c9cccf;
+  box-shadow: 0 2px 8px rgba(22, 29, 37, 0.1);
+}
+
+.bxa-image-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.bxa-image-icon {
+  width: 32px;
+  height: 32px;
+  background-color: #f0f9ff !important;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bxa-my-app-container .bxa-image-icon svg {
+  color: #2563eb !important;
+  width: 16px !important;
+  height: 16px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-image-title h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+  margin: 0 0 2px 0;
+}
+
+.bxa-image-title p {
+  font-size: 12px;
+  color: var(--app-subtext-color) !important;
+  margin: 0;
+}
+
+.bxa-image-container {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--app-border-color);
+}
+
+.bxa-image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Product recommendations section */
+.bxa-product-recommendations-section {
+  margin-top: 40px;
+  padding: 30px 20px;
+  background-color: var(--app-bg-color) !important;
+  border: 1px solid var(--app-border-color);
+  border-radius: 12px;
+}
+
+.bxa-recommendations-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--app-border-color);
+}
+
+.bxa-recommendations-icon {
+  width: 48px;
+  height: 48px;
+  background-color: #f0f9ff !important;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bxa-my-app-container .bxa-recommendations-icon svg {
+  color: #2563eb !important;
+  width: 24px !important;
+  height: 24px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-recommendations-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+  margin: 0 0 4px 0;
+}
+
+.bxa-recommendations-header p {
+  font-size: 14px;
+  color: var(--app-subtext-color) !important;
+  margin: 0;
+}
+
+/* Product grid */
+.bxa-product-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 640px) {
+  .bxa-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .bxa-product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Product item styling */
+.bxa-product-item {
+  background-color: var(--app-bg-color) !important;
+  color: var(--app-text-color, #202223) !important;
+  border: 1px solid var(--app-border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+.bxa-product-item:hover {
+  border-color: #c9cccf;
+  box-shadow: 0 2px 4px rgba(22, 29, 37, 0.1);
+}
+
+.bxa-product-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: #f6f6f7 !important;
+}
+
+.bxa-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.bxa-product-item:hover .bxa-product-image img {
+  transform: scale(1.05);
+}
+
+.bxa-product-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 200px);
+}
+
+.bxa-product-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--app-text-color, #202223) !important;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 44px;
+}
+
+.bxa-product-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--app-text-color, #202223) !important;
+  margin: 0 0 12px 0;
+}
+
+.bxa-product-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.bxa-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  background-color: #f6f6f7 !important;
+  color: #6d7175 !important;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+.bxa-product-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 16px;
+  background-color: #202223 !important;
+  color: #ffffff !important;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-top: auto;
+}
+
+.bxa-product-link:hover {
+  background-color: #000000 !important;
+  text-decoration: none;
+  color: #ffffff !important;
+}
+
+/* Product chat button icon had no CSS size protection at all --
+   it relied purely on its own HTML width/height attributes,
+   which lose to any theme svg reset regardless of specificity. */
+.bxa-my-app-container .bxa-product-chat-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  flex-shrink: 0 !important;
+}
+
+.bxa-my-app-container .bxa-product-chat-btn svg {
+  width: 28px !important;
+  height: 28px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* No products styling */
+.bxa-no-products {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--app-subtext-color) !important;
+}
+
+.bxa-no-products-icon {
+  margin: 0 auto 20px auto;
+  width: 64px;
+  height: 64px;
+  background-color: #f6f6f7 !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bxa-my-app-container .bxa-no-products-icon svg {
+  color: #c9cccf !important;
+  width: 48px !important;
+  height: 48px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-no-products h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+  margin: 0 0 8px 0;
+}
+
+.bxa-no-products p {
+  font-size: 14px;
+  margin: 0;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Recommendations filters */
+.bxa-recommendations-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.bxa-filter-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--app-text-color) !important;
+}
+
+.bxa-active-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bxa-filter-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Tips section styling */
+.bxa-tips-section {
+  margin-top: 40px;
+  padding: 30px 20px;
+  background-color: var(--app-bg-color) !important;
+  border: 1px solid var(--app-border-color);
+  border-radius: 12px;
+}
+
+.bxa-tips-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--app-border-color);
+}
+
+.bxa-tips-icon {
+  width: 48px;
+  height: 48px;
+  background-color: #fef3c7 !important;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bxa-my-app-container .bxa-tips-icon svg {
+  color: #f59e0b !important;
+  width: 24px !important;
+  height: 24px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-tips-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+  margin: 0 0 4px 0;
+}
+
+.bxa-tips-header p {
+  font-size: 14px;
+  color: var(--app-subtext-color) !important;
+  margin: 0;
+}
+
+.bxa-tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background-color: #fefbf3 !important;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.bxa-tip-item:hover {
+  background-color: #fef3c7 !important;
+  border-color: #fbbf24;
+}
+
+.bxa-tip-item:last-child {
+  margin-bottom: 0;
+}
+
+.bxa-tip-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #f59e0b !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.bxa-my-app-container .bxa-tip-icon svg {
+  color: #ffffff !important;
+  width: 12px !important;
+  height: 12px !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.bxa-tip-text {
+  font-size: 14px;
+  color: var(--app-text-color) !important;
+  line-height: 1.5;
+}
+
+/* Webcam section styling */
+.bxa-webcam-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+  border: 1px solid var(--app-border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f6f6f7 !important;
+  width: 256px;
+  height: 256px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bxa-webcam-section video {
+  width: 256px;
+  height: 256px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Loading animation styles */
+.bxa-loading-section {
+  padding: 32px;
+  text-align: center;
+  background: var(--app-bg-color);
+  border-radius: 12px;
+  border: 1px solid var(--app-border-color);
+  margin: 16px 0;
+}
+
+/* Some themes hide their own "loading" placeholders with a
+   broad selector like `[class*="loading"] { display: none
+   !important; }`, which can accidentally catch our
+   .bxa-loading-section by name and beat the inline
+   `style.display = 'block'` main.js sets (inline style loses
+   to any external !important rule). main.js now also toggles
+   this class whenever it shows/hides the section, giving us
+   an !important rule of our own to win that fight. */
+.bxa-my-app-container .bxa-loading-section.bxa-is-visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.bxa-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.bxa-my-app-container .bxa-loading-section.bxa-is-visible .bxa-loading-content {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.bxa-loading-spinner {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.bxa-my-app-container .bxa-loading-section.bxa-is-visible .bxa-loading-spinner {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 60px !important;
+  height: 60px !important;
+}
+
+.bxa-spinner-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top: 3px solid #202223;
+  border-radius: 50%;
+  animation: bxa-beautyxia-spin-anim-v1 1.2s linear infinite;
+}
+
+.bxa-spinner-ring:nth-child(2) {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  border-top-color: #202223;
+  opacity: 0.7;
+  animation-delay: -0.4s;
+}
+
+.bxa-spinner-ring:nth-child(3) {
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  border-top-color: #202223;
+  opacity: 0.4;
+  animation-delay: -0.8s;
+}
+
+/* =========================================
+   Spinner animation hardening
+   Root causes seen in the wild:
+   1. Generic keyframe names like `bxa-spin` collide with a
+      theme or third-party script defining `@keyframes bxa-spin`
+      of its own, silently replacing ours (last one parsed wins;
+      keyframes are global, not scoped, so our CSS-var scoping
+      trick from section 0 can't help here).
+   2. Theme "reduce motion" / performance scripts that blanket-
+      apply `* { animation: none !important; }` or
+      `@media (prefers-reduced-motion: reduce) { * { animation:
+      none !important; } }` even for essential, non-decorative
+      loading feedback.
+   Fix: namespace the keyframes with a long, collision-resistant
+   name, and re-declare the animation on a highly specific
+   selector with !important so it wins over generic resets.
+   We intentionally do NOT override an explicit user OS-level
+   prefers-reduced-motion preference -- only guard against blanket
+   theme scripts that disable all animations unconditionally. */
+@keyframes bxa-beautyxia-spin-anim-v1 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.bxa-my-app-container .bxa-loading-spinner .bxa-spinner-ring {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: absolute !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-style: solid !important;
+  border-width: 3px !important;
+  border-color: transparent !important;
+  border-top-color: #202223 !important;
+  border-radius: 50% !important;
+  animation-name: bxa-beautyxia-spin-anim-v1 !important;
+  animation-duration: 1.2s !important;
+  animation-timing-function: linear !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+}
+
+.bxa-my-app-container .bxa-loading-spinner .bxa-spinner-ring:nth-child(2) {
+  width: 80% !important;
+  height: 80% !important;
+  top: 10% !important;
+  left: 10% !important;
+  opacity: 0.7 !important;
+  animation-delay: -0.4s !important;
+}
+
+.bxa-my-app-container .bxa-loading-spinner .bxa-spinner-ring:nth-child(3) {
+  width: 60% !important;
+  height: 60% !important;
+  top: 20% !important;
+  left: 20% !important;
+  opacity: 0.4 !important;
+  animation-delay: -0.8s !important;
+}
+
+.bxa-loading-text h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+}
+
+.bxa-loading-text p {
+  margin: 0;
+  color: var(--app-subtext-color) !important;
+  font-size: 14px;
+}
+
+/* GDPR consent section */
+.bxa-gdpr-consent-section {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #f6f6f7 !important;
+  border: 1px solid var(--app-border-color);
+  border-radius: 8px;
+}
+
+.bxa-consent-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* =========================================
+   Consent checkbox hardening
+   Many themes globally hide native checkboxes and replace
+   them with a custom box drawn via `label::before`, e.g.
+   `input[type="checkbox"] { position:absolute; opacity:0;
+   width:0; height:0; }` paired with their own newsletter/
+   marketing opt-in markup. Our checkbox isn't part of that
+   pattern, so it silently disappears with no visual box, or
+   inherits a phantom ::before box meant for the theme's own
+   labels.
+   Fix: `all: revert !important` strips every theme-author
+   declaration on this exact input back to the browser
+   default, then we re-apply our intended look explicitly.
+   We also null out any ::before/::after the theme might be
+   attaching to our label. */
+.bxa-my-app-container .bxa-consent-checkbox input#consent[type="checkbox"] {
+  all: revert !important;
+  -webkit-appearance: checkbox !important;
+  appearance: checkbox !important;
+  position: static !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 2px 0 0 0 !important;
+  padding: 0 !important;
+  border: 1px solid #8c9196 !important;
+  accent-color: #202223 !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  vertical-align: middle !important;
+  z-index: auto !important;
+}
+
+.bxa-my-app-container .bxa-consent-checkbox label::before,
+.bxa-my-app-container .bxa-consent-checkbox label::after {
+  content: none !important;
+  display: none !important;
+}
+
+.bxa-consent-checkbox input[type="checkbox"] {
+  margin: 0;
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  accent-color: #202223;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.bxa-consent-checkbox label {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333333 !important;
+  cursor: pointer;
+  margin: 0;
+}
+
+.bxa-privacy-policy-link {
+  font-size: 13px;
+  color: var(--app-subtext-color) !important;
+  margin: 0;
+  text-align: center;
+}
+
+.bxa-privacy-policy-link a {
+  color: #2563eb !important;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.bxa-privacy-policy-link a:hover {
+  color: #1d4ed8 !important;
+  text-decoration: none;
+}
+
+/* Feedback Section Styling */
+.bxa-feedback-section {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: var(--app-bg-color) !important;
+  border: 1px solid var(--app-border-color);
+  border-radius: 12px;
+}
+
+.bxa-feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.bxa-feedback-heart-icon {
+  color: #333333 !important;
+  width: 24px !important;
+  height: 24px !important;
+  flex-shrink: 0;
+}
+
+/* The markup's <svg> inside .bxa-feedback-header never actually
+   carries the .bxa-feedback-heart-icon class above, so that rule
+   was dead -- it only "worked" by accident via the HTML
+   width/height attributes on themes with no svg reset. Target
+   what's actually in the DOM and protect it properly. */
+.bxa-my-app-container .bxa-feedback-header svg {
+  color: #333333 !important;
+  width: 24px !important;
+  height: 24px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-feedback-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--app-text-color) !important;
+  margin: 0;
+}
+
+.bxa-feedback-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.bxa-btn-feedback-positive,
+.bxa-btn-feedback-negative {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid var(--app-border-color);
+  background-color: #ffffff !important;
+  color: var(--app-text-color) !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.bxa-btn-feedback-positive:hover:not(:disabled) {
+  background-color: #f0fdf4 !important;
+  border-color: #16a34a;
+  color: #16a34a !important;
+}
+
+.bxa-my-app-container .bxa-btn-feedback-positive svg {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-btn-feedback-negative:hover:not(:disabled) {
+  background-color: #fef2f2 !important;
+  border-color: #dc2626;
+  color: #dc2626 !important;
+}
+
+.bxa-my-app-container .bxa-btn-feedback-negative svg {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-btn-feedback-positive:disabled,
+.bxa-btn-feedback-negative:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.bxa-dislike-feedback-area {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f6f6f7 !important;
+  border-radius: 8px;
+}
+
+.bxa-dislike-feedback-area p {
+  font-size: 14px;
+  color: var(--app-text-color) !important;
+  margin: 0 0 12px 0;
+  font-weight: 500;
+}
+
+.bxa-dislike-feedback-area textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #c9cccf;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  resize: vertical;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+
+.bxa-dislike-feedback-area textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.bxa-btn-submit-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #202223 !important;
+  color: #ffffff !important;
+  border: 1px solid #202223;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.bxa-btn-submit-feedback:hover {
+  background-color: #000000 !important;
+  border-color: #000000;
+}
+
+.bxa-my-app-container .bxa-btn-submit-feedback svg {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: none !important;
+  max-height: none !important;
+  flex-shrink: 0;
+}
+
+.bxa-feedback-message {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background-color: #f0fdf4 !important;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  color: #15803d !important;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .bxa-feedback-buttons {
+    flex-direction: column;
+  }
+
+  .bxa-btn-feedback-positive,
+  .bxa-btn-feedback-negative {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Focus states for accessibility */
+.bxa-upload-button:focus,
+.bxa-analyze-button:focus,
+.bxa-webcam-button:focus,
+.bxa-capture-button:focus,
+.bxa-stop-camera-button:focus,
+.bxa-lang-selector-btn:focus {
+  outline-offset: 2px;
+}
+
+.bxa-hidden-file:focus + .bxa-upload-button {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+
+/* =========================================
+   Chatbot Modal - Premium UI
+   ========================================= */
+.bxa-chatbot-modal {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.45) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.bxa-chatbot-modal-content {
+  background-color: #ffffff !important;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 560px;
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 8px 24px -4px rgba(0, 0, 0, 0.18),
+    0 32px 64px -16px rgba(0, 0, 0, 0.22);
+  animation: chatbot-slide-up 0.28s cubic-bezier(0.34, 1.42, 0.64, 1) both;
+}
+
+@keyframes chatbot-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.bxa-chatbot-header {
+  background-color: var(--chatbot-header-bg, #202223) !important;
+  color: var(--chatbot-header-text, #ffffff) !important;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 20px 20px 0 0;
+}
+
+.bxa-chatbot-header > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bxa-my-app-container .bxa-chatbot-header svg {
+  color: var(--chatbot-header-text, #ffffff) !important;
+  opacity: 0.9;
+  flex-shrink: 0;
+  width: 20px !important;
+  height: 20px !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.bxa-chatbot-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--chatbot-header-text, #ffffff) !important;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bxa-close-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: var(--chatbot-header-text, #ffffff) !important;
+  font-size: 18px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background 0.18s ease;
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0;
+}
+
+.bxa-close-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.bxa-chatbot-messages {
+  flex: 1;
+  padding: 20px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f7f8fa !important;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.bxa-chatbot-messages::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bxa-chatbot-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bxa-chatbot-messages::-webkit-scrollbar-thumb {
+  background-color: #d1d5db !important;
+  border-radius: 4px;
+}
+
+.bxa-message {
+  max-width: 78%;
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  word-break: break-word;
+  animation: msg-pop-in 0.2s ease both;
+}
+
+@keyframes msg-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bxa-msg-bot {
+  background-color: var(--chatbot-bot-msg-bg, #f0f1f2) !important;
+  color: var(--chatbot-bot-msg-text, #202223) !important;
+  align-self: flex-start;
+  border-radius: 16px 16px 16px 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.bxa-msg-user {
+  background-color: var(--chatbot-user-msg-bg, #202223) !important;
+  color: var(--chatbot-user-msg-text, #ffffff) !important;
+  align-self: flex-end;
+  border-radius: 16px 16px 4px 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.bxa-typing-indicator {
+  align-self: flex-start;
+  background-color: var(--chatbot-bot-msg-bg, #f0f1f2) !important;
+  color: var(--chatbot-bot-msg-text, #202223) !important;
+  padding: 10px 16px;
+  border-radius: 16px 16px 16px 4px;
+  font-size: 13px;
+  font-style: italic;
+  opacity: 0.7;
+  display: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.bxa-chatbot-input-area {
+  padding: 14px 16px;
+  background: #ffffff;
+  border-top: 1px solid #edeef0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-radius: 0 0 20px 20px;
+}
+
+#chatbot-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 24px;
+  outline: none;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #202223 !important;
+  background: #f7f8fa;
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  line-height: 1.4;
+}
+
+#chatbot-input::placeholder {
+  color: #9ca3af !important;
+}
+
+#chatbot-input:focus {
+  border-color: var(--chatbot-header-bg, #202223);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(32, 34, 35, 0.08);
+}
+
+#chatbot-send-btn {
+  background: var(--chatbot-header-bg, #202223);
+  color: var(--chatbot-header-text, #ffffff) !important;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  flex-shrink: 0;
+}
+
+#chatbot-send-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.06);
+}
+
+#chatbot-send-btn:active {
+  transform: scale(0.96);
+}
+
+.bxa-my-app-container #chatbot-send-btn svg {
+  width: 17px !important;
+  height: 17px !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin-left: 2px;
+}
+
+/* =========================================
+   Chatbot Action Buttons (Add to Cart / View Product)
+   ========================================= */
+.bxa-chatbot-action-btns {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.bxa-chatbot-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.bxa-chatbot-action-btn--cart {
+  background-color: var(--chatbot-header-bg, #202223) !important;
+  color: var(--chatbot-header-text, #ffffff) !important;
+  border: 1px solid var(--chatbot-header-bg, #202223);
+}
+
+.bxa-chatbot-action-btn--cart:hover:not(:disabled) {
+  opacity: 0.82;
+}
+
+.bxa-chatbot-action-btn--cart:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.bxa-chatbot-action-btn--cart.bxa-chatbot-action-btn--success {
+  background-color: #16a34a !important;
+  border-color: #16a34a;
+  opacity: 1;
+}
+
+.bxa-chatbot-action-btn--view {
+  background-color: transparent !important;
+  color: var(--chatbot-bot-msg-text, #202223) !important;
+  border: 1px solid #d1d5db;
+}
+
+.bxa-chatbot-action-btn--view:hover {
+  border-color: var(--chatbot-header-bg, #202223);
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}

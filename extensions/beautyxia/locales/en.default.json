@@ -1,0 +1,62 @@
+{
+  "ratings": {
+    "stars": {
+      "label": "Ratings"
+    },
+    "home": {
+      "recommendationText": "Recommended Product!"
+    }
+  },
+  "beautyxia": {
+    "title": "Face Analysis",
+    "description": "Upload an image to analyze facial features and expressions.",
+    "upload_placeholder": "Upload or capture an image",
+    "upload_button": "Upload Image",
+    "use_camera": "Use Camera",
+    "capture_photo": "Capture Photo",
+    "stop_camera": "Stop Camera",
+    "consent_text": "I agree to the processing of my photo for temporary analysis to receive beauty tips and product recommendations. I understand that my photo will not be stored.",
+    "privacy_policy_text": "Read our",
+    "privacy_policy_link": "Privacy Policy",
+    "privacy_policy_details": "for more details.",
+    "analyze_face": "Analyze Face",
+    "upload_note": "PNG, JPG, or JPEG up to 10MB",
+    "analyzing_title": "Analyzing Your Face",
+    "analyzing_subtitle": "Please wait while we process your image...",
+    "analysis_complete": "Analysis Complete",
+    "analysis_results_subtitle": "Here are your personalized skin analysis results",
+    "face_detected": "Face Detected Successfully",
+    "analysis_confidence": "Analysis completed with high confidence",
+    "skin_type": "Skin Type",
+    "eye_colors": "Eye Colors",
+    "left_eye": "Left:",
+    "right_eye": "Right:",
+    "acne_analysis": "Acne Analysis",
+    "level": "Level:",
+    "detected_issues": "Detected Issues",
+    "personalized_tips": "Personalized Tips",
+    "tips_subtitle": "Skincare recommendations based on your analysis",
+    "detailed_analysis": "Detailed Analysis",
+    "visual_breakdown": "Visual breakdown of detected areas and skin conditions",
+    "issue_detection": "Issue Detection",
+    "areas_highlighted": "Areas of concern highlighted",
+    "skin_segmentation": "Skin Segmentation",
+    "skin_areas_mapped": "Different skin areas mapped",
+    "recommended_products": "Recommended Products",
+    "curated_products": "Curated skincare products based on your analysis",
+    "filtering_by": "Filtering by:",
+    "view_product": "View Product",
+    "no_products_found": "No Products Found",
+    "no_products_message": "We couldn't find products matching your skin analysis. Check back later for new recommendations.",
+    "no_issues_detected": "No skin issues detected",
+    "feedback_header": "How was your experience?",
+    "feedback_helpful": "Helpful",
+    "feedback_not_helpful": "Not Helpful",
+    "feedback_thank_you": "Thank you for your feedback!",
+    "feedback_submitted": "Your feedback has been submitted successfully.",
+    "feedback_error": "Failed to submit feedback. Please try again.",
+    "chatbot_greeting": "Hi! I'm {productName}. How can I help you today?",
+    "chatbot_add_to_cart": "Add to Cart",
+    "chatbot_view_product": "View Product"
+  }
+}

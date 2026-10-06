@@ -1,0 +1,62 @@
+{
+  "ratings": {
+    "stars": {
+      "label": "Peringkat"
+    },
+    "home": {
+      "recommendationText": "Produk Rekomendasi!"
+    }
+  },
+  "beautyxia": {
+    "title": "Analisis Wajah",
+    "description": "Unggah gambar untuk menganalisis fitur wajah dan ekspresi.",
+    "upload_placeholder": "Unggah atau ambil gambar",
+    "upload_button": "Unggah Gambar",
+    "use_camera": "Gunakan Kamera",
+    "capture_photo": "Ambil Foto",
+    "stop_camera": "Hentikan Kamera",
+    "consent_text": "Saya menyetujui pemrosesan foto saya untuk analisis sementara guna menerima tips kecantikan dan rekomendasi produk. Saya mengerti bahwa foto saya tidak akan disimpan.",
+    "privacy_policy_text": "Baca",
+    "privacy_policy_link": "Kebijakan Privasi",
+    "privacy_policy_details": "kami untuk detail lebih lanjut.",
+    "analyze_face": "Analisis Wajah",
+    "upload_note": "PNG, JPG, atau JPEG hingga 10MB",
+    "analyzing_title": "Menganalisis Wajah Anda",
+    "analyzing_subtitle": "Mohon tunggu sementara kami memproses gambar Anda...",
+    "analysis_complete": "Analisis Selesai",
+    "analysis_results_subtitle": "Berikut adalah hasil analisis kulit personalisasi Anda",
+    "face_detected": "Wajah Berhasil Terdeteksi",
+    "analysis_confidence": "Analisis selesai dengan tingkat keyakinan tinggi",
+    "skin_type": "Jenis Kulit",
+    "eye_colors": "Warna Mata",
+    "left_eye": "Kiri:",
+    "right_eye": "Kanan:",
+    "acne_analysis": "Analisis Jerawat",
+    "level": "Tingkat:",
+    "detected_issues": "Masalah Terdeteksi",
+    "personalized_tips": "Tips Personalisasi",
+    "tips_subtitle": "Rekomendasi perawatan kulit berdasarkan analisis Anda",
+    "detailed_analysis": "Analisis Rinci",
+    "visual_breakdown": "Rincian visual dari area yang terdeteksi dan kondisi kulit",
+    "issue_detection": "Deteksi Masalah",
+    "areas_highlighted": "Area yang menjadi perhatian disorot",
+    "skin_segmentation": "Segmentasi Kulit",
+    "skin_areas_mapped": "Pemetaan berbagai area kulit",
+    "recommended_products": "Produk yang Direkomendasikan",
+    "curated_products": "Produk perawatan kulit pilihan berdasarkan analisis Anda",
+    "filtering_by": "Filter berdasarkan:",
+    "view_product": "Lihat Produk",
+    "no_products_found": "Produk Tidak Ditemukan",
+    "no_products_message": "Kami tidak dapat menemukan produk yang sesuai dengan analisis kulit Anda. Periksa kembali nanti untuk rekomendasi baru.",
+    "no_issues_detected": "Tidak ada masalah kulit yang terdeteksi",
+    "feedback_header": "Bagaimana pengalaman Anda?",
+    "feedback_helpful": "Bermanfaat",
+    "feedback_not_helpful": "Kurang Bermanfaat",
+    "feedback_thank_you": "Terima kasih atas masukan Anda!",
+    "feedback_submitted": "Masukan Anda telah berhasil dikirim.",
+    "feedback_error": "Gagal mengirim masukan. Silakan coba lagi.",
+    "chatbot_greeting": "Halo! Saya {productName}. Ada yang bisa saya bantu hari ini?",
+    "chatbot_add_to_cart": "Tambah ke Keranjang",
+    "chatbot_view_product": "Lihat Produk"
+  }
+}

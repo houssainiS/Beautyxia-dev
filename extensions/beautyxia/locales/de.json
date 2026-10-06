@@ -1,0 +1,62 @@
+{
+  "ratings": {
+    "stars": {
+      "label": "Bewertungen"
+    },
+    "home": {
+      "recommendationText": "Empfohlenes Produkt!"
+    }
+  },
+  "beautyxia": {
+    "title": "Gesichtsanalyse",
+    "description": "Laden Sie ein Bild hoch, um Gesichtszüge und -ausdrücke zu analysieren.",
+    "upload_placeholder": "Bild hochladen oder aufnehmen",
+    "upload_button": "Bild hochladen",
+    "use_camera": "Kamera verwenden",
+    "capture_photo": "Foto aufnehmen",
+    "stop_camera": "Kamera stoppen",
+    "consent_text": "Ich stimme der Verarbeitung meines Fotos zur vorübergehenden Analyse zu, um Beauty-Tipps und Produktempfehlungen zu erhalten. Ich verstehe, dass mein Foto nicht gespeichert wird.",
+    "privacy_policy_text": "Lesen Sie unsere",
+    "privacy_policy_link": "Datenschutzerklärung",
+    "privacy_policy_details": "für weitere Details.",
+    "analyze_face": "Gesicht analysieren",
+    "upload_note": "PNG, JPG oder JPEG bis zu 10MB",
+    "analyzing_title": "Ihr Gesicht wird analysiert",
+    "analyzing_subtitle": "Bitte warten Sie, während wir Ihr Bild verarbeiten...",
+    "analysis_complete": "Analyse abgeschlossen",
+    "analysis_results_subtitle": "Hier sind Ihre personalisierten Hautanalyse-Ergebnisse",
+    "face_detected": "Gesicht erfolgreich erkannt",
+    "analysis_confidence": "Analyse mit hoher Zuverlässigkeit abgeschlossen",
+    "skin_type": "Hauttyp",
+    "eye_colors": "Augenfarben",
+    "left_eye": "Links:",
+    "right_eye": "Rechts:",
+    "acne_analysis": "Akne-Analyse",
+    "level": "Stufe:",
+    "detected_issues": "Erkannte Probleme",
+    "personalized_tips": "Personalisierte Tipps",
+    "tips_subtitle": "Hautpflegeempfehlungen basierend auf Ihrer Analyse",
+    "detailed_analysis": "Detaillierte Analyse",
+    "visual_breakdown": "Visuelle Aufschlüsselung der erkannten Bereiche und Hautzustände",
+    "issue_detection": "Problemerkennung",
+    "areas_highlighted": "Betroffene Bereiche hervorgehoben",
+    "skin_segmentation": "Hautsegmentierung",
+    "skin_areas_mapped": "Verschiedene Hautbereiche kartiert",
+    "recommended_products": "Empfohlene Produkte",
+    "curated_products": "Ausgewählte Hautpflegeprodukte basierend auf Ihrer Analyse",
+    "filtering_by": "Gefiltert nach:",
+    "view_product": "Produkt ansehen",
+    "no_products_found": "Keine Produkte gefunden",
+    "no_products_message": "Wir konnten keine Produkte finden, die zu Ihrer Hautanalyse passen. Schauen Sie später für neue Empfehlungen vorbei.",
+    "no_issues_detected": "Keine Hautprobleme erkannt",
+    "feedback_header": "Wie war Ihre Erfahrung?",
+    "feedback_helpful": "Hilfreich",
+    "feedback_not_helpful": "Nicht hilfreich",
+    "feedback_thank_you": "Danke für Ihr Feedback!",
+    "feedback_submitted": "Ihr Feedback wurde erfolgreich übermittelt.",
+    "feedback_error": "Fehler beim Senden des Feedbacks. Bitte versuchen Sie es erneut.",
+    "chatbot_greeting": "Hallo! Ich bin {productName}. Wie kann ich Ihnen heute helfen?",
+    "chatbot_add_to_cart": "In den Warenkorb",
+    "chatbot_view_product": "Produkt ansehen"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "ratings": {
+    "stars": {
+      "label": "평가"
+    },
+    "home": {
+      "recommendationText": "추천 제품!"
+    }
+  },
+  "beautyxia": {
+    "title": "얼굴 분석",
+    "description": "이미지를 업로드하여 얼굴의 특징과 표정을 분석하세요.",
+    "upload_placeholder": "이미지 업로드 또는 촬영",
+    "upload_button": "이미지 업로드",
+    "use_camera": "카메라 사용",
+    "capture_photo": "사진 촬영",
+    "stop_camera": "카메라 중지",
+    "consent_text": "뷰티 팁 및 제품 추천을 받기 위한 임시 분석용으로 내 사진을 처리하는 데 동의합니다. 사진이 저장되지 않는다는 것을 이해합니다.",
+    "privacy_policy_text": "자세한 내용은",
+    "privacy_policy_link": "개인정보 처리방침",
+    "privacy_policy_details": "을 읽어보세요.",
+    "analyze_face": "얼굴 분석",
+    "upload_note": "PNG, JPG 또는 JPEG 최대 10MB",
+    "analyzing_title": "얼굴 분석 중",
+    "analyzing_subtitle": "이미지를 처리하는 동안 잠시 기다려 주세요...",
+    "analysis_complete": "분석 완료",
+    "analysis_results_subtitle": "맞춤형 피부 분석 결과입니다",
+    "face_detected": "얼굴이 성공적으로 감지되었습니다",
+    "analysis_confidence": "높은 신뢰도로 분석이 완료되었습니다",
+    "skin_type": "피부 타입",
+    "eye_colors": "눈 색상",
+    "left_eye": "왼쪽:",
+    "right_eye": "오른쪽:",
+    "acne_analysis": "여드름 분석",
+    "level": "레벨:",
+    "detected_issues": "감지된 문제",
+    "personalized_tips": "맞춤형 팁",
+    "tips_subtitle": "분석 기반 스킨케어 추천",
+    "detailed_analysis": "상세 분석",
+    "visual_breakdown": "감지된 영역 및 피부 상태의 시각적 분석",
+    "issue_detection": "문제 감지",
+    "areas_highlighted": "우려되는 부위 강조 표시",
+    "skin_segmentation": "피부 분할",
+    "skin_areas_mapped": "매핑된 다양한 피부 영역",
+    "recommended_products": "추천 제품",
+    "curated_products": "분석을 기반으로 엄선된 스킨케어 제품",
+    "filtering_by": "필터링 기준:",
+    "view_product": "제품 보기",
+    "no_products_found": "제품을 찾을 수 없음",
+    "no_products_message": "피부 분석과 일치하는 제품을 찾을 수 없습니다. 나중에 새로운 추천 제품을 확인해 주세요.",
+    "no_issues_detected": "피부 문제가 감지되지 않았습니다",
+    "feedback_header": "경험이 어떠셨나요?",
+    "feedback_helpful": "도움이 됨",
+    "feedback_not_helpful": "도움이 되지 않음",
+    "feedback_thank_you": "의견을 보내주셔서 감사합니다!",
+    "feedback_submitted": "피드백이 성공적으로 제출되었습니다.",
+    "feedback_error": "피드백 제출에 실패했습니다. 다시 시도해 주세요.",
+    "chatbot_greeting": "안녕하세요! 저는 {productName}입니다. 오늘 어떤 도움이 필요하신가요?",
+    "chatbot_add_to_cart": "장바구니에 담기",
+    "chatbot_view_product": "상품 보기",
+    
+  }
+}

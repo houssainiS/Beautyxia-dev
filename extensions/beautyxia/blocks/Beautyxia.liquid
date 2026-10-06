@@ -1,0 +1,607 @@
+{{ 'style.css' | asset_url | stylesheet_tag }}
+
+<style>
+  /* CSS Variable Definitions */
+  .bxa-my-app-container {
+    --app-bg-color: {{ block.settings.app_bg_color | default: '#ffffff' }};
+    --app-text-color: {{ block.settings.text_color | default: '#333333' }};
+    --app-subtext-color: {{ block.settings.text_color | color_modify: 'alpha', 0.8 }};
+    --app-border-color: {{ block.settings.text_color | color_modify: 'alpha', 0.2 }};
+
+    /* Button Colors Mapping */
+    --btn-camera-bg: {{ block.settings.camera_btn_bg | default: '#000000' }};
+    --btn-camera-text: {{ block.settings.camera_btn_text | default: '#ffffff' }};
+
+    --btn-analyze-bg: {{ block.settings.analyze_btn_bg | default: '#4a90e2' }};
+    --btn-analyze-text: {{ block.settings.analyze_btn_text | default: '#ffffff' }};
+
+    --btn-upload-bg: {{ block.settings.upload_btn_bg | default: '#f4f4f4' }};
+    --btn-upload-text: {{ block.settings.upload_btn_text | default: '#333333' }};
+
+    /* Chatbot Colors Mapping */
+    --chatbot-header-bg: {{ block.settings.chatbot_header_bg | default: '#202223' }};
+    --chatbot-header-text: {{ block.settings.chatbot_header_text | default: '#ffffff' }};
+    --chatbot-user-msg-bg: {{ block.settings.chatbot_user_msg_bg | default: '#202223' }};
+    --chatbot-user-msg-text: {{ block.settings.chatbot_user_msg_text | default: '#ffffff' }};
+    --chatbot-bot-msg-bg: {{ block.settings.chatbot_bot_msg_bg | default: '#f0f1f2' }};
+    --chatbot-bot-msg-text: {{ block.settings.chatbot_bot_msg_text | default: '#202223' }};
+  }
+
+  /* Force the colors to apply to specific buttons */
+  .bxa-webcam-button, .bxa-capture-button, .bxa-stop-camera-button {
+    background-color: var(--btn-camera-bg) !important;
+    color: var(--btn-camera-text) !important;
+    border-color: var(--btn-camera-bg) !important;
+  }
+  
+  .bxa-upload-button {
+    background-color: var(--btn-upload-bg) !important;
+    color: var(--btn-upload-text) !important;
+  }
+
+  /* Analyze Button - Normal State */
+  .bxa-analyze-button {
+    background-color: var(--btn-analyze-bg) !important;
+    color: var(--btn-analyze-text) !important;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* FIX: Analyze Button - Disabled State (Checkbox not checked) */
+  .bxa-analyze-button:disabled {
+    background-color: #e1e3e5 !important;
+    color: #8c9196 !important;
+    border-color: #e1e3e5 !important;
+    cursor: not-allowed;
+    opacity: 1 !important;
+  }
+</style>
+
+<div class="bxa-my-app-container" data-current-lang="{{ request.locale.iso_code }}" dir="{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}">
+  <div class="bxa-face-analysis-container">
+    <div class="bxa-face-analysis-card">
+      <div class="bxa-face-analysis-header">
+        <div class="bxa-header-content" style="justify-content: center;">
+          <div class="bxa-title-section" style="text-align: center; width: 100%;">
+            <h2 class="bxa-face-analysis-title">{{ 'beautyxia.title' | t }}</h2>
+            <p class="bxa-face-analysis-description">{{ 'beautyxia.description' | t }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bxa-face-analysis-body">
+        {% comment %} Image preview {% endcomment %}
+        <div class="bxa-face-analysis-preview">
+          <div class="bxa-preview-placeholder" id="preview-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#6d7175" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="bxa-face-icon">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="#6d7175"/>
+              <circle cx="8" cy="10" r="1" fill="#6d7175" stroke="#6d7175"/>
+              <circle cx="16" cy="10" r="1" fill="#6d7175" stroke="#6d7175"/>
+              <path d="M8 16s1.5 2 4 2 4-2 4-2" fill="none" stroke="#6d7175"/>
+            </svg>
+            <p>{{ 'beautyxia.upload_placeholder' | t }}</p>
+          </div>
+          <img 
+            id="preview-image"
+            src="https://cdn.shopify.com/static/images/no-image.svg" 
+            alt="Uploaded Image Preview" 
+            width="256"
+            height="256" 
+            class="bxa-preview-image"
+            style="display: none;"
+          />
+
+          {% comment %} Scan overlay - animated face-scanning effect shown over the photo while analysis is running {% endcomment %}
+          <div class="bxa-scan-overlay" id="scan-overlay">
+            <div class="bxa-scan-grid"></div>
+            <div class="bxa-scan-line"></div>
+            <div class="bxa-scan-corner bxa-scan-corner-tl"></div>
+            <div class="bxa-scan-corner bxa-scan-corner-tr"></div>
+            <div class="bxa-scan-corner bxa-scan-corner-bl"></div>
+            <div class="bxa-scan-corner bxa-scan-corner-br"></div>
+            <div class="bxa-scan-point" style="top:32%; left:38%; animation-delay:0s;"></div>
+            <div class="bxa-scan-point" style="top:30%; left:63%; animation-delay:0.3s;"></div>
+            <div class="bxa-scan-point" style="top:52%; left:50%; animation-delay:0.6s;"></div>
+            <div class="bxa-scan-point" style="top:72%; left:40%; animation-delay:0.9s;"></div>
+            <div class="bxa-scan-point" style="top:72%; left:61%; animation-delay:1.2s;"></div>
+          </div>
+        </div>
+
+        {% comment %} Webcam section {% endcomment %}
+        <div id="webcam-section" class="bxa-webcam-section" style="display:none;">
+          <video id="webcam-video" width="256" height="256" autoplay playsinline></video>
+          <canvas id="webcam-canvas" width="256" height="256" style="display:none;"></canvas>
+        </div>
+
+        {% comment %} Upload section {% endcomment %}
+        <div class="bxa-upload-section">
+          <input id="picture" type="file" class="bxa-hidden-file" accept="image/png, image/jpeg" />
+          <button type="button" class="bxa-upload-button" onclick="document.getElementById('picture').click()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="bxa-icon-upload">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" x2="12" y1="3" y2="15"/>
+            </svg>
+            <span>{{ 'beautyxia.upload_button' | t }}</span>
+          </button>
+
+          <button type="button" class="bxa-webcam-button" id="webcam-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span>{{ 'beautyxia.use_camera' | t }}</span>
+          </button>
+
+          <button type="button" class="bxa-capture-button" id="capture-btn" style="display:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span>{{ 'beautyxia.capture_photo' | t }}</span>
+          </button>
+
+          <button type="button" class="bxa-stop-camera-button" id="stop-camera-btn" style="display:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            </svg>
+            <span>{{ 'beautyxia.stop_camera' | t }}</span>
+          </button>
+
+          {% comment %} GDPR consent section {% endcomment %}
+          <div class="bxa-gdpr-consent-section">
+            <div class="bxa-consent-checkbox">
+              <input type="checkbox" id="consent" required>
+              <label for="consent">{{ 'beautyxia.consent_text' | t }}</label>
+            </div>
+            <p class="bxa-privacy-policy-link">
+              <span>{{ 'beautyxia.privacy_policy_text' | t }}</span> 
+              <a href="https://beautyai.duckdns.org/privacy-policy/" target="_blank">{{ 'beautyxia.privacy_policy_link' | t }}</a> 
+              <span>{{ 'beautyxia.privacy_policy_details' | t }}</span>
+            </p>
+          </div>
+
+          <button class="bxa-analyze-button" disabled id="analyze-btn" data-text-analyze="{{ 'beautyxia.analyze_face' | t }}" data-text-analyzing="{{ 'beautyxia.analyzing_title' | t }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12l2 2 4-4"/>
+              <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1"/>
+            </svg>
+            <span class="button-text">{{ 'beautyxia.analyze_face' | t }}</span>
+          </button>
+          <p class="bxa-upload-note">{{ 'beautyxia.upload_note' | t }}</p>
+        </div>
+
+        {% comment %} Loading section {% endcomment %}
+        <div id="loading-section" class="bxa-loading-section" style="display:none;">
+          <div class="bxa-loading-content">
+            <div class="bxa-loading-spinner">
+              <div class="bxa-spinner-ring"></div>
+              <div class="bxa-spinner-ring"></div>
+              <div class="bxa-spinner-ring"></div>
+            </div>
+            <div class="bxa-loading-text">
+              <h3>{{ 'beautyxia.analyzing_title' | t }}</h3>
+              <p>{{ 'beautyxia.analyzing_subtitle' | t }}</p>
+            </div>
+          </div>
+        </div>
+
+        {% comment %} Results section {% endcomment %}
+        <div id="results-section" class="bxa-results-section" style="display:none;">
+          <div class="bxa-results-header">
+            <div class="bxa-results-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1"/>
+              </svg>
+            </div>
+            <h2>{{ 'beautyxia.analysis_complete' | t }}</h2>
+            <p>{{ 'beautyxia.analysis_results_subtitle' | t }}</p>
+          </div>
+
+          <div class="bxa-analysis-results">
+            <div class="bxa-face-display">
+              <div class="bxa-face-frame">
+                <img id="analyzed-face" src="https://cdn.shopify.com/static/images/no-image.svg" alt="Analyzed Face" width="80" height="80">
+                <div class="bxa-face-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 12l2 2 4-4"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="bxa-face-info">
+                <h3 id="face-status">{{ 'beautyxia.face_detected' | t }}</h3>
+                <p id="analysis-summary">{{ 'beautyxia.analysis_confidence' | t }}</p>
+              </div>
+            </div>
+
+            {% comment %} Result cards {% endcomment %}
+            <div class="bxa-result-cards">
+              <div class="bxa-result-card" id="skin-type-card">
+                <div class="bxa-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </div>
+                <div class="bxa-card-content">
+                  <h4>{{ 'beautyxia.skin_type' | t }}</h4>
+                  <p id="skin-type-value">-</p>
+                  <div class="bxa-probability-bars" id="skin-probabilities">
+                    {% comment %} Probability bars will be added here {% endcomment %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="bxa-result-card" id="eye-colors-card">
+                <div class="bxa-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                  </svg>
+                </div>
+                <div class="bxa-card-content">
+                  <h4>{{ 'beautyxia.eye_colors' | t }}</h4>
+                  <div class="bxa-eye-colors">
+                    <div class="bxa-eye-color">
+                      <span class="bxa-eye-label">{{ 'beautyxia.left_eye' | t }}</span>
+                      <span id="left-eye-color" class="bxa-eye-value">-</span>
+                    </div>
+                    <div class="bxa-eye-color">
+                      <span class="bxa-eye-label">{{ 'beautyxia.right_eye' | t }}</span>
+                      <span id="right-eye-color" class="bxa-eye-value">-</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bxa-result-card" id="acne-card">
+                <div class="bxa-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                  </svg>
+                </div>
+                <div class="bxa-card-content">
+                  <h4>{{ 'beautyxia.acne_analysis' | t }}</h4>
+                  <div class="bxa-acne-info">
+                    <div class="bxa-acne-level">
+                      <span>{{ 'beautyxia.level' | t }}</span>
+                      <span id="acne-level" class="bxa-acne-value">-</span>
+                    </div>
+                    <div class="bxa-confidence-meter">
+                      <div class="bxa-confidence-bar">
+                        <div id="acne-confidence-fill" class="bxa-confidence-fill"></div>
+                      </div>
+                      <span id="acne-confidence" class="bxa-confidence-text">-</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bxa-result-card" id="detections-card">
+                <div class="bxa-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 12l2 2 4-4"/>
+                    <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1"/>
+                  </svg>
+                </div>
+                <div class="bxa-card-content">
+                  <h4>{{ 'beautyxia.detected_issues' | t }}</h4>
+                  <div id="detected-issues" class="bxa-detected-issues" data-no-issues-text="{{ 'beautyxia.no_issues_detected' | t }}">
+                    {% comment %} Issues will be populated here {% endcomment %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {% comment %} Analysis Images Section {% endcomment %}
+        <div id="analysis-images" class="bxa-analysis-images-section" style="display:none;">
+          <div class="bxa-images-header">
+            <h3>{{ 'beautyxia.detailed_analysis' | t }}</h3>
+            <p>{{ 'beautyxia.visual_breakdown' | t }}</p>
+          </div>
+          
+          <div class="bxa-analysis-images-grid">
+            <div class="bxa-analysis-image-card">
+              <div class="bxa-image-header">
+                <div class="bxa-image-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 12l2 2 4-4"/>
+                    <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1"/>
+                  </svg>
+                </div>
+                <div class="bxa-image-title">
+                  <h4>{{ 'beautyxia.issue_detection' | t }}</h4>
+                  <p>{{ 'beautyxia.areas_highlighted' | t }}</p>
+                </div>
+              </div>
+              <div class="bxa-image-container">
+                <img id="yolo-annotated-image" src="https://cdn.shopify.com/static/images/no-image.svg" alt="YOLO Detection Results" width="300" height="300" style="display: none;"/>
+              </div>
+            </div>
+
+            <div class="bxa-analysis-image-card">
+              <div class="bxa-image-header">
+                <div class="bxa-image-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                  </svg>
+                </div>
+                <div class="bxa-image-title">
+                  <h4>{{ 'beautyxia.skin_segmentation' | t }}</h4>
+                  <p>{{ 'beautyxia.skin_areas_mapped' | t }}</p>
+                </div>
+              </div>
+              <div class="bxa-image-container">
+                <img id="segmentation-overlay-image" src="https://cdn.shopify.com/static/images/no-image.svg" alt="Segmentation Analysis" width="300" height="300" style="display: none;"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% comment %} Feedback Section {% endcomment %}
+        <div class="bxa-feedback-section" id="feedbackSection" style="display:none;" data-msg-thanks="{{ 'beautyxia.feedback_thank_you' | t }}" data-msg-error="{{ 'beautyxia.feedback_error' | t }}">
+          <div class="bxa-feedback-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <h3>{{ 'beautyxia.feedback_header' | t }}</h3>
+          </div>
+          <div class="bxa-feedback-buttons">
+            <button class="btn bxa-btn-feedback-positive" id="likeBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+              </svg>
+              <span>{{ 'beautyxia.feedback_helpful' | t }}</span>
+            </button>
+            <button class="btn bxa-btn-feedback-negative" id="dislikeBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+              </svg>
+              <span>{{ 'beautyxia.feedback_not_helpful' | t }}</span>
+            </button>
+          </div>
+          <div class="bxa-feedback-message" id="feedbackMessage" style="display:none;"></div>
+        </div>
+
+        {% comment %} Product Recommendations Section {% endcomment %}
+        <div id="product-recommendations" class="bxa-product-recommendations-section" style="display:none;">
+          <div class="bxa-recommendations-header">
+            <div class="bxa-recommendations-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="8" cy="21" r="1"/>
+                <circle cx="19" cy="21" r="1"/>
+                <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57L20.42 9H5.12"/>
+              </svg>
+            </div>
+            <h3>{{ 'beautyxia.recommended_products' | t }}</h3>
+            <p>{{ 'beautyxia.curated_products' | t }}</p>
+          </div>
+          
+          <div class="bxa-recommendations-filters">
+            <span class="bxa-filter-label">{{ 'beautyxia.filtering_by' | t }}</span>
+            <div id="active-filters" class="bxa-active-filters"></div>
+          </div>
+          
+          <div id="recommended-products" class="bxa-product-grid">
+          {% paginate collections.all.products by 1000 %}
+            {% for product in collections['all'].products %}
+            <div class="bxa-product-item" 
+                data-tags="{{ product.tags | join: ',' | downcase }}"
+                data-title="{{ product.title | downcase }}"
+                style="display: none;">
+
+              <div class="bxa-product-image">
+                <img src="{{ product.featured_image | img_url: '200x200' }}" 
+                    alt="{{ product.title }}" 
+                    width="200" 
+                    height="200">
+              </div>
+
+              <div class="bxa-product-info">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                  <h4 class="bxa-product-title">{{ product.title }}</h4>
+                  <button type="button" class="bxa-product-chat-btn" data-product-title="{{ product.title | escape }}" data-product-description="{{ product.description | strip_html | escape }}" data-product-url="{{ product.url }}" data-product-variant-id="{{ product.selected_or_first_available_variant.id }}" title="Chat with this product" style="background: none; border: none; cursor: pointer; color: var(--btn-analyze-bg); flex-shrink: 0; width: 28px; height: 28px; padding: 0; display: flex; align-items: center; justify-content: center;">
+
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="-5.0 -10.0 110.0 110.0">
+                  <g fill="currentColor">
+                    <path d="m87.02 45.176-3.6875-1.8438c0-18.41-14.926-33.332-33.332-33.332-18.41 0-33.336 14.922-33.336 33.336l-3.6836 1.8438c-1.6367 0.81641-2.9805 2.9883-2.9805 4.8203v6.668c0 1.832 1.3438 4.0039 2.9805 4.8242l3.6836 1.8438h5v-20c0-15.625 12.715-28.336 28.336-28.336s28.332 12.711 28.332 28.336v26.664c0 8.2852-6.7148 15-15 15h-10v-5h-6.668v10h16.668c11.047 0 20-8.9531 20-20v-6.668l3.6875-1.8438c1.6406-0.81641 2.9805-2.9883 2.9805-4.8203v-6.668c0-1.832-1.3398-4.0039-2.9805-4.8242z"/>
+                    <path d="m63.332 35h-10.832v-7.0859c1.9648-0.67187 3.332-2.0898 3.332-3.75 0-2.3008-2.6094-4.1641-5.832-4.1641s-5.8359 1.8633-5.8359 4.1641c0 1.6602 1.3672 3.0859 3.3359 3.75v7.0859h-10.836c-5.5195 0-10 4.4805-10 10v13.332c0 9.1992 7.4727 16.668 16.672 16.668h13.332c9.1992 0 16.664-7.4688 16.664-16.668v-13.332c0-5.5195-4.4766-10-10-10zm-24.996 16.668v-3.332c0-1.8438 1.4922-3.3359 3.332-3.3359 1.8398 0 3.332 1.4883 3.332 3.3359v3.332c0 1.8438-1.4922 3.332-3.3359 3.332-1.8359 0-3.3281-1.4883-3.3281-3.332zm19.996 13.332-6.6641 1.668h-3.332l-6.6719-1.668v-3.332h16.668zm3.3359-13.332c0 1.8477-1.4922 3.332-3.3359 3.332-1.8398 0-3.332-1.4883-3.332-3.332v-3.332c0-1.8477 1.4922-3.3359 3.332-3.3359 1.8398 0 3.3359 1.4883 3.3359 3.3359z"/>
+                  </g>
+                  </svg>
+                  </button>
+                </div>
+                <p class="bxa-product-price">{{ product.price | money }}</p>
+
+                <div class="bxa-product-tags">
+                  {% comment %} JS will dynamically inject matched tags here {% endcomment %}
+                </div>
+
+                <a href="{{ product.url }}" class="bxa-product-link">
+                  {{ 'beautyxia.view_product' | t }}
+                </a>
+              </div>
+
+            </div>
+          {% endfor %}
+          {% endpaginate %}
+          </div>
+
+          <div id="no-products" class="bxa-no-products" style="display: none;">
+            <div class="bxa-no-products-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 12h8"/>
+              </svg>
+            </div>
+            <h4>{{ 'beautyxia.no_products_found' | t }}</h4>
+            <p>{{ 'beautyxia.no_products_message' | t }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% comment %} Chatbot Modal {% endcomment %}
+        <div id="product-chatbot-modal" class="bxa-chatbot-modal" style="display: none;">
+          <div class="bxa-chatbot-modal-content">
+            <div class="bxa-chatbot-header">
+              <div style="display:flex; align-items:center; gap: 10px;">
+                <!-- CHATBOT_ICON_PLACEHOLDER -->
+                <h3 id="chatbot-product-title" style="margin: 0;">Product Chat</h3>
+                <!-- Beta Badge -->
+                <span style="font-size: 12px; background-color: #f0f0f0; color: #555; padding: 2px 6px; border-radius: 4px; font-weight: bold;">Beta</span>
+              </div>
+              <button id="close-chatbot-btn" class="bxa-close-btn">&times;</button>
+            </div>
+            
+            <div id="chatbot-messages" class="bxa-chatbot-messages">
+              </div>
+            
+            <div class="bxa-chatbot-input-area">
+              <input type="text" id="chatbot-input" placeholder="Ask me anything about this product...">
+              <button id="chatbot-send-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+</div>
+
+<script>
+  // 1. Pass the Liquid schema settings to a global object
+  window.BeautyxiaConfig = {
+    maxProductsLimit: "{{ block.settings.max_products_shown | default: 'all' }}",
+    chatbotI18n: {
+      greeting: {{ 'beautyxia.chatbot_greeting' | t | replace: '&#39;', "'" | replace: '&amp;', '&' | replace: '&quot;', '"' | replace: '&lt;', '<' | replace: '&gt;', '>' | json }},
+      addToCart: {{ 'beautyxia.chatbot_add_to_cart' | t | replace: '&#39;', "'" | replace: '&amp;', '&' | replace: '&quot;', '"' | replace: '&lt;', '<' | replace: '&gt;', '>' | json }},
+      viewProduct: {{ 'beautyxia.chatbot_view_product' | t | replace: '&#39;', "'" | replace: '&amp;', '&' | replace: '&quot;', '"' | replace: '&lt;', '<' | replace: '&gt;', '>' | json }}
+    }
+  };
+</script>
+<script src="{{ 'main.js' | asset_url }}" defer></script>
+<script src="{{ 'product_chatbot.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Beautyxia Face Analysis",
+  "target": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Appearance Settings"
+    },
+    {
+      "type": "color",
+      "id": "app_bg_color",
+      "label": "Background Color (Default: #ffffff)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color (Default: #333333)",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Button Colors"
+    },
+    {
+      "type": "color",
+      "id": "camera_btn_bg",
+      "label": "Camera Button BG (Default: #2563eb)",
+      "default": "#2563eb"
+    },
+    {
+      "type": "color",
+      "id": "camera_btn_text",
+      "label": "Camera Button Text (Default: #ffffff)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "analyze_btn_bg",
+      "label": "Analyze Button BG (Default: #000000)",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "analyze_btn_text",
+      "label": "Analyze Button Text (Default: #ffffff)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "upload_btn_bg",
+      "label": "Upload Button BG (Default: #f4f4f4)",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "upload_btn_text",
+      "label": "Upload Button Text (Default: #333333)",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Features"
+    },
+    {
+      "type": "select",
+      "id": "max_products_shown",
+      "label": "Maximum Recommended Products",
+      "info": "Limits how many products appear after analysis to avoid overwhelming the customer.",
+      "options": [
+        { "value": "25", "label": "25 Products" },
+        { "value": "50", "label": "50 Products" },
+        { "value": "100", "label": "100 Products" },
+        { "value": "all", "label": "Show All Matches" }
+      ],
+      "default": "all"
+    },
+    {
+      "type": "header",
+      "content": "Chatbot Colors"
+    },
+    {
+      "type": "color",
+      "id": "chatbot_header_bg",
+      "label": "Chatbot Header Background (Default: #202223)",
+      "default": "#202223"
+    },
+    {
+      "type": "color",
+      "id": "chatbot_header_text",
+      "label": "Chatbot Header Text (Default: #ffffff)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "chatbot_user_msg_bg",
+      "label": "User Message Background (Default: #202223)",
+      "default": "#202223"
+    },
+    {
+      "type": "color",
+      "id": "chatbot_user_msg_text",
+      "label": "User Message Text (Default: #ffffff)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "chatbot_bot_msg_bg",
+      "label": "Bot Message Background (Default: #f0f1f2)",
+      "default": "#f0f1f2"
+    },
+    {
+      "type": "color",
+      "id": "chatbot_bot_msg_text",
+      "label": "Bot Message Text (Default: #202223)",
+      "default": "#202223"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,62 @@
+{
+  "ratings": {
+    "stars": {
+      "label": "Valoraciones"
+    },
+    "home": {
+      "recommendationText": "¡Producto recomendado!"
+    }
+  },
+  "beautyxia": {
+    "title": "Análisis Facial",
+    "description": "Sube una imagen para analizar los rasgos y expresiones faciales.",
+    "upload_placeholder": "Sube o captura una imagen",
+    "upload_button": "Subir Imagen",
+    "use_camera": "Usar Cámara",
+    "capture_photo": "Capturar Foto",
+    "stop_camera": "Detener Cámara",
+    "consent_text": "Acepto el procesamiento de mi foto para un análisis temporal con el fin de recibir consejos de belleza y recomendaciones de productos. Entiendo que mi foto no será almacenada.",
+    "privacy_policy_text": "Lee nuestra",
+    "privacy_policy_link": "Política de Privacidad",
+    "privacy_policy_details": "para más detalles.",
+    "analyze_face": "Analizar Rostro",
+    "upload_note": "PNG, JPG o JPEG de hasta 10MB",
+    "analyzing_title": "Analizando tu rostro",
+    "analyzing_subtitle": "Por favor, espera mientras procesamos tu imagen...",
+    "analysis_complete": "Análisis Completo",
+    "analysis_results_subtitle": "Aquí tienes tus resultados personalizados del análisis de piel",
+    "face_detected": "Rostro detectado con éxito",
+    "analysis_confidence": "Análisis completado con alta confianza",
+    "skin_type": "Tipo de Piel",
+    "eye_colors": "Color de Ojos",
+    "left_eye": "Izquierdo:",
+    "right_eye": "Derecho:",
+    "acne_analysis": "Análisis de Acné",
+    "level": "Nivel:",
+    "detected_issues": "Problemas Detectados",
+    "personalized_tips": "Consejos Personalizados",
+    "tips_subtitle": "Recomendaciones de cuidado de la piel basadas en tu análisis",
+    "detailed_analysis": "Análisis Detallado",
+    "visual_breakdown": "Desglose visual de las áreas detectadas y condiciones de la piel",
+    "issue_detection": "Detección de Problemas",
+    "areas_highlighted": "Áreas de interés resaltadas",
+    "skin_segmentation": "Segmentación de la Piel",
+    "skin_areas_mapped": "Diferentes áreas de la piel mapeadas",
+    "recommended_products": "Productos Recomendados",
+    "curated_products": "Productos de cuidado de la piel seleccionados según tu análisis",
+    "filtering_by": "Filtrando por:",
+    "view_product": "Ver Producto",
+    "no_products_found": "No se encontraron productos",
+    "no_products_message": "No pudimos encontrar productos que coincidan con tu análisis de piel. Vuelve más tarde para ver nuevas recomendaciones.",
+    "no_issues_detected": "No se detectaron problemas en la piel",
+    "feedback_header": "¿Cómo fue tu experiencia?",
+    "feedback_helpful": "Útil",
+    "feedback_not_helpful": "No útil",
+    "feedback_thank_you": "¡Gracias por tus comentarios!",
+    "feedback_submitted": "Tus comentarios han sido enviados con éxito.",
+    "feedback_error": "Error al enviar los comentarios. Por favor, inténtalo de nuevo.",
+    "chatbot_greeting": "¡Hola! Soy {productName}. ¿Cómo puedo ayudarte hoy?",
+    "chatbot_add_to_cart": "Añadir al carrito",
+    "chatbot_view_product": "Ver producto"
+  }
+}
