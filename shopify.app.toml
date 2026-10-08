@@ -2,7 +2,7 @@
 
 client_id = "85cb50ab0a8badfd7eacbdea3ff7224d"
 name = "Beautyxia Dev"
-application_url = "https://shopify.dev/apps/default-app-home"
+application_url = "https://glutton-snowboard-detoxify.ngrok-free.dev/app_entry/"
 embedded = true
 
 [build]
@@ -12,9 +12,26 @@ include_config_on_deploy = true
 [webhooks]
 api_version = "2027-01"
 
+# BEAUTYXIA BILLING: tells us when the plan changes (dev app only)
+[[webhooks.subscriptions]]
+topics = ["app_subscriptions/update"]
+uri = "https://glutton-snowboard-detoxify.ngrok-free.dev/webhooks/app_subscriptions_update/"
+
+# Mandatory GDPR compliance webhooks
+[[webhooks.subscriptions]]
+compliance_topics = ["customers/data_request"]
+uri = "https://glutton-snowboard-detoxify.ngrok-free.dev/webhooks/customers_data_request/"
+
+[[webhooks.subscriptions]]
+compliance_topics = ["customers/redact"]
+uri = "https://glutton-snowboard-detoxify.ngrok-free.dev/webhooks/customers_redact/"
+
+[[webhooks.subscriptions]]
+compliance_topics = ["shop/redact"]
+uri = "https://glutton-snowboard-detoxify.ngrok-free.dev/webhooks/shop_redact/"
+
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = ""
+scopes = "read_online_store_pages,read_online_store_navigation,write_online_store_pages,write_online_store_navigation,read_themes"
 
 [auth]
-redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
+redirect_urls = [ "https://glutton-snowboard-detoxify.ngrok-free.dev/auth/callback/" ]

@@ -104,6 +104,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(requestData),
             });
 
+            // ==========================================
+            // BEAUTYXIA BILLING
+            // 403 = the store's plan doesn't include the chatbot. Show the
+            // server's message instead of the generic "couldn't connect" one.
+            // ==========================================
+            if (response.status === 403) {
+                let planMessage = "The chatbot isn't available on this store right now.";
+                try {
+                    const blocked = await response.json();
+                    if (blocked && blocked.error) planMessage = blocked.error;
+                } catch (e) { /* keep default message */ }
+                addMessageToUI('bot', planMessage);
+                return; // the finally block below still turns the typing indicator off
+            }
+
             if (!response.ok) throw new Error('Network response was not ok');
             
             const data = await response.json();
